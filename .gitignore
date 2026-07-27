@@ -1,0 +1,18 @@
+# Environment Variables
+.env
+
+# Virtual Environment
+venv/
+
+# Python
+__pycache__/
+*.pyc
+
+# Generated project data
+backend/repositories/
+backend/uploads/
+backend/chroma_db/
+
+# IDE
+.vscode/
+.idea/
