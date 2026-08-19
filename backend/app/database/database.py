@@ -2,6 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from app.core.config import settings
+from app.database.base import Base
 
 DATABASE_URL = (
     f"mysql+pymysql://{settings.MYSQL_USER}:"
@@ -29,3 +30,9 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+
+
+def init_db():
+    Base.metadata.create_all(bind=engine)
