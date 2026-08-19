@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeMind - Intelligent Codebase Assistant</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom Styles (Terminal Dark) -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Mouse Spotlight (Bright Light) -->
+    <div class="mouse-glow"></div>
+
+    <!-- App Container -->
+    <div id="app-container" class="container-fluid h-100 d-flex flex-column p-0 position-relative">
+        
+        <!-- 1. Authentication Screen -->
+        <section id="auth-screen" class="screen-section active align-items-center justify-content-center">
+            <div class="panel p-5" style="width: 100%; max-width: 420px;">
+                <div class="text-center mb-4">
+                    <h3 class="mb-1 text-primary"><i class="fa-solid fa-cube me-2 text-accent"></i>CodeMind</h3>
+                    <p class="text-secondary small font-code">v2.0.0-beta</p>
+                </div>
+
+                <form id="login-form" class="d-none">
+                    <div class="mb-3">
+                        <label class="form-label text-secondary small">Email</label>
+                        <input type="email" class="ide-input w-100" placeholder="developer@local" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label text-secondary small">Password</label>
+                        <input type="password" class="ide-input w-100" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="ide-btn btn-accent w-100 justify-content-center">
+                        Sign In <i class="fa-solid fa-arrow-right ms-1"></i>
+                    </button>
+                    <div class="text-center mt-4">
+                        <span class="text-secondary small">New session? </span>
+                        <a href="#" id="show-register" class="text-decoration-none small fw-bold text-accent">Initialize workspace</a>
+                    </div>
+                </form>
+
+                <form id="register-form">
+                    <div class="mb-3">
+                        <label class="form-label text-secondary small">Name</label>
+                        <input type="text" class="ide-input w-100" placeholder="Developer Name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-secondary small">Email</label>
+                        <input type="email" class="ide-input w-100" placeholder="developer@local" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label text-secondary small">Password</label>
+                        <input type="password" class="ide-input w-100" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="ide-btn btn-accent w-100 justify-content-center">
+                        Initialize Workspace <i class="fa-solid fa-terminal ms-2"></i>
+                    </button>
+                    <div class="text-center mt-4">
+                        <span class="text-secondary small">Session active? </span>
+                        <a href="#" id="show-login" class="text-decoration-none small fw-bold text-accent">Sign in</a>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- 2. Dashboard Screen -->
+        <section id="dashboard-screen" class="screen-section">
+            <!-- Navbar -->
+            <nav class="d-flex justify-content-between align-items-center bg-surface border-bottom-subtle px-4 py-2">
+                <div class="d-flex align-items-center gap-3">
+                    <i class="fa-solid fa-cube fs-5 text-accent"></i>
+                    <span class="fw-semibold text-primary font-code small">CodeMind Workspace</span>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <button class="ide-btn btn-accent font-code" id="btn-add-repo" data-bs-toggle="modal" data-bs-target="#addRepoModal">
+                        <i class="fa-solid fa-folder-plus"></i> Connect Repository
+                    </button>
+                    <button class="ide-btn font-code" id="btn-logout" title="Disconnect">
+                        <i class="fa-solid fa-plug text-secondary"></i>
+                    </button>
+                </div>
+            </nav>
+
+            <div class="container-fluid p-4 overflow-auto">
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h4 class="mb-1 text-primary">Repositories</h4>
+                        <p class="text-secondary small mt-1 font-code">/workspace/repos</p>
+                    </div>
+                </div>
+
+                <!-- Repositories Grid -->
+                <div class="row g-4" id="repos-grid">
+                    <div class="col-md-6 col-lg-4">
+                        <div class="panel repo-card p-4 h-100 d-flex flex-column" onclick="openChat('CodeMind')">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <h5 class="mb-1 text-primary font-code"><i class="fa-brands fa-github me-2 text-secondary"></i>CodeMind</h5>
+                                    <div class="d-flex align-items-center gap-2 mt-2">
+                                        <span class="status-dot status-success" title="INDEXED"></span>
+                                        <span class="ide-badge badge-success">INDEXED</span>
+                                    </div>
+                                </div>
+                                <button class="ide-btn p-1 m-0 border-0" onclick="event.stopPropagation(); showMetrics('CodeMind')" title="Evaluation Metrics">
+                                    <i class="fa-solid fa-chart-line text-secondary"></i>
+                                </button>
+                            </div>
+                            
+                            <p class="text-secondary small flex-grow-1 font-prose">Intelligent codebase assistant (MERN stack + Python backend).</p>
+                            
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between text-secondary mb-1 font-code" style="font-size: 0.65rem;">
+                                    <span>JavaScript 60%</span>
+                                    <span>Python 40%</span>
+                                </div>
+                                <div class="progress" style="height: 4px; background: var(--bg);">
+                                    <div class="progress-bar bg-warning" style="width: 60%"></div>
+                                    <div class="progress-bar" style="background-color: var(--accent); width: 40%"></div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center border-top-subtle pt-3">
+                                <span class="small text-secondary font-code" style="font-size: 0.7rem;"><i class="fa-regular fa-clock me-1"></i>2h ago</span>
+                                <span class="ide-badge">MERN</span>
+                                <span class="small text-secondary font-code" style="font-size: 0.7rem;"><i class="fa-solid fa-file-code me-1"></i>124 files</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Metrics Panel (Modal) -->
+            <div class="modal fade" id="metricsModal" tabindex="-1">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content bg-surface border-subtle">
+                        <div class="modal-header border-bottom-subtle">
+                            <h5 class="modal-title text-primary font-code small"><i class="fa-solid fa-chart-line me-2 text-accent"></i>Evaluation Metrics: <span id="metrics-repo-name" class="text-secondary"></span></h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body p-4 bg-base">
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <h6 class="text-secondary small mb-3 font-code">Retrieval Precision (RAG)</h6>
+                                    <canvas id="precisionChart" height="200"></canvas>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="text-secondary small mb-3 font-code">Latency (ms)</h6>
+                                    <canvas id="latencyChart" height="200"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Add Repo Modal -->
+            <div class="modal fade" id="addRepoModal" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content bg-surface border-subtle">
+                        <div class="modal-header border-bottom-subtle">
+                            <h5 class="modal-title text-primary font-code small"><i class="fa-solid fa-folder-plus me-2 text-accent"></i>Connect Repository</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body p-4 bg-base">
+                            <form id="add-repo-form">
+                                <div class="mb-4">
+                                    <label class="form-label text-secondary small">GitHub URL</label>
+                                    <input type="url" class="ide-input w-100" placeholder="https://github.com/username/repo">
+                                </div>
+                                <button type="submit" class="ide-btn btn-accent w-100 justify-content-center">
+                                    <i class="fa-solid fa-play"></i> Run Indexing Pipeline
+                                </button>
+                            </form>
+                            
+                            <!-- Indexing Progress -->
+                            <div id="indexing-progress" class="d-none mt-4 pt-4 border-top-subtle">
+                                <h6 class="text-secondary small mb-3 font-code">Pipeline Status</h6>
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fa-solid fa-circle-notch fa-spin me-3 text-accent" id="icon-clone"></i>
+                                    <div class="flex-grow-1">
+                                        <p class="mb-0 text-primary small font-code" id="text-clone">1. Repository Manager [Running...]</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fa-regular fa-circle text-secondary me-3" id="icon-parse"></i>
+                                    <div class="flex-grow-1">
+                                        <p class="mb-0 text-secondary small font-code" id="text-parse">2. Code Parser (tree-sitter)</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fa-regular fa-circle text-secondary me-3" id="icon-embed"></i>
+                                    <div class="flex-grow-1">
+                                        <p class="mb-0 text-secondary small font-code" id="text-embed">3. Embedding Generator</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Chat Screen (Split Pane) -->
+        <section id="chat-screen" class="screen-section h-100 p-0">
+            <nav class="d-flex justify-content-between align-items-center bg-surface border-bottom-subtle px-4 py-2">
+                <div class="d-flex align-items-center gap-3">
+                    <button class="ide-btn p-1 border-0" onclick="showDashboard()">
+                        <i class="fa-solid fa-arrow-left text-secondary"></i>
+                    </button>
+                    <i class="fa-solid fa-cube fs-5 text-accent"></i>
+                    <span class="fw-semibold text-primary font-code small" id="current-repo-badge">CodeMind</span>
+                    <span class="text-secondary small font-code">/ Intelligence Pipeline</span>
+                </div>
+                <div>
+                    <button class="ide-btn btn-accent font-code" onclick="newChat()">
+                        <i class="fa-solid fa-plus me-1"></i> New Query
+                    </button>
+                </div>
+            </nav>
+
+            <div class="split-layout h-100">
+                <!-- Left Pane: Chat -->
+                <div class="split-left position-relative d-flex flex-column h-100 w-50">
+                    
+                    <!-- Toast Container -->
+                    <div class="position-absolute w-100 p-3" style="bottom: 80px; z-index: 50;">
+                        <div id="similar-search-toast" class="toast-similar d-none mx-auto w-75 p-3 rounded d-flex align-items-center gap-3">
+                            <i class="fa-solid fa-lightbulb text-warning"></i>
+                            <div class="flex-grow-1">
+                                <span class="d-block small fw-bold">Similar past search detected: <span id="similar-search-text" class="fw-normal">"How do I login?"</span></span>
+                                <span class="font-code text-secondary" style="font-size: 0.7rem;">Delta: 2 new chunks vs previous retrieval.</span>
+                            </div>
+                            <button class="ide-btn p-0 m-0 border-0" onclick="$('#similar-search-toast').addClass('d-none')"><i class="fa-solid fa-xmark text-secondary"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- Messages -->
+                    <div class="flex-grow-1 overflow-auto p-4" id="chat-messages" style="scroll-behavior: smooth;">
+                        <div class="text-center my-5 text-secondary">
+                            <i class="fa-solid fa-terminal fs-1 mb-3 text-accent"></i>
+                            <h5 class="text-primary fw-semibold">Ask CodeMind</h5>
+                            <p class="text-secondary small font-code mt-2">Context Engine Active</p>
+                        </div>
+                    </div>
+
+                    <!-- Input Area -->
+                    <div class="p-3 border-top-subtle bg-surface">
+                        <form id="chat-form" class="position-relative mx-auto w-100">
+                            <input type="text" id="chat-input" class="ide-input w-100 font-prose shadow-none" placeholder="Ask about functions, architecture, or flow... (Cmd+K)" style="padding-right: 40px; height: 50px;" autocomplete="off">
+                            <button type="submit" class="ide-btn border-0 position-absolute top-50 translate-middle-y end-0 text-accent">
+                                <i class="fa-solid fa-paper-plane"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Right Pane: Evidence -->
+                <div class="split-right w-50 h-100 d-flex flex-column">
+                    <div class="d-flex border-bottom-subtle bg-surface">
+                        <button class="ide-tab active w-50" id="tab-evidence">Evidence (Chunks)</button>
+                        <button class="ide-tab w-50" id="tab-relationships">Code Relationships</button>
+                    </div>
+                    
+                    <div class="flex-grow-1 overflow-auto p-4" id="evidence-content">
+                        <div class="text-center text-secondary mt-5 pt-5">
+                            <i class="fa-solid fa-magnifying-glass fs-2 mb-3"></i>
+                            <p class="text-secondary small font-code mt-2">Retrieved chunks will appear here.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex-grow-1 overflow-hidden d-none p-0" id="relationships-content">
+                        <!-- vis-network container -->
+                        <div id="network-graph" style="width: 100%; height: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    
+    <!-- Highlight.js (github-dark theme) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    
+    <!-- Custom Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/chat.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
