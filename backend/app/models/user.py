@@ -1,6 +1,6 @@
 from sqlalchemy import Boolean, Column, DateTime, Integer, String
 from sqlalchemy.sql import func
-
+from sqlalchemy.orm import relationship
 from app.database.base import Base
 
 
@@ -22,3 +22,8 @@ class User(Base):
         server_default=func.now(),
         nullable=False
     )
+    repositories = relationship(
+    "Repository",
+    back_populates="user",
+    cascade="all, delete-orphan",
+)

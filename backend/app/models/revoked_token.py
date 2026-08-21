@@ -2,7 +2,7 @@ from datetime import datetime
 
 from sqlalchemy import Column, Integer, String, DateTime
 
-from app.database.database import Base
+from app.database.base import Base
 
 
 class RevokedToken(Base):

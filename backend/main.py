@@ -5,7 +5,7 @@ from app.core.config import settings
 from app.api.routes.auth import router as auth_router
 from app.database.database import Base, engine
 from app.models.revoked_token import RevokedToken
-
+from app.api.routes.repositories import router as repositories_router
 Base.metadata.create_all(bind=engine)
 
 
@@ -28,3 +28,4 @@ def home():
 
 app.include_router(health_router)
 app.include_router(auth_router)
+app.include_router(repositories_router)
