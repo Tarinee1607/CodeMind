@@ -1,5 +1,9 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+
+from app.core.dependencies import get_current_user
+from app.database.database import get_db
+from app.models.user import User
 from app.schemas.repository import (
     RepositoryCreate,
     RepositoryResponse,
@@ -12,30 +16,6 @@ from app.services.repository_service import (
     get_user_repositories,
     update_repository,
 )
-from fastapi import APIRouter, Depends, HTTPException
-from app.core.dependencies import get_current_user
-from app.database.database import get_db
-from app.models.user import User
-
-from app.services.repository_service import get_user_repositories
-from app.services.repository_service import (
-    create_repository,
-    get_user_repositories,
-)
-from app.services.repository_service import (
-    create_repository,
-    get_repository_by_id,
-    get_user_repositories,
-)
-from fastapi import APIRouter, Depends, HTTPException
-from app.services.repository_service import (
-    create_repository,
-    delete_repository,
-    get_repository_by_id,
-    get_user_repositories,
-)
-
-
 
 
 router = APIRouter(
@@ -57,6 +37,7 @@ def list_repositories(
         user_id=current_user.id,
     )
 
+
 @router.post(
     "",
     response_model=RepositoryResponse,
@@ -67,20 +48,15 @@ def create_new_repository(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    local_path = (
-        f"backend/repositories/"
-        f"{current_user.id}/"
-        f"{repository_data.name}"
-    )
-
     return create_repository(
         db=db,
         user_id=current_user.id,
         name=repository_data.name,
         source_type=repository_data.source_type,
         source_url=repository_data.source_url,
-        local_path=local_path,
+        local_path="",
     )
+
 
 @router.get(
     "/{repository_id}",
@@ -104,6 +80,7 @@ def get_repository(
         )
 
     return repository
+
 
 @router.put(
     "/{repository_id}",
@@ -135,6 +112,7 @@ def update_existing_repository(
         source_url=repository_data.source_url,
     )
 
+
 @router.delete(
     "/{repository_id}",
     status_code=204,
@@ -160,4 +138,3 @@ def remove_repository(
         db=db,
         repository=repository,
     )
-
