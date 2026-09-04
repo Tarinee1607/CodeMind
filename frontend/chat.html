@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeMind - Chat</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <style>
+        body { display: flex; flex-direction: column; height: 100vh; margin: 0; }
+        .navbar { background: rgba(0,0,0,0.3); border-bottom: 1px solid rgba(255,255,255,0.1); flex-shrink: 0; }
+        .navbar-brand { color: white !important; font-weight: bold; }
+        .chat-container { flex-grow: 1; overflow-y: auto; padding: 20px 0; }
+        .message-box { max-width: 800px; margin: 0 auto 20px auto; padding: 20px; border-radius: 12px; }
+        .message-user { background-color: rgba(99, 102, 241, 0.15); border-left: 4px solid #6366f1; color: #f1f5f9; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .message-bot { border: 1px solid rgba(255, 255, 255, 0.1); color: #f1f5f9; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .source-file { font-family: monospace; font-size: 0.85em; background: rgba(255, 255, 255, 0.1); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.2); margin-right: 5px; margin-bottom: 5px; display: inline-block; color: #e2e8f0; }
+        .input-area { background: rgba(0,0,0,0.3); padding: 15px 0; border-top: 1px solid rgba(255,255,255,0.1); flex-shrink: 0; backdrop-filter: blur(12px); }
+        .input-wrapper { max-width: 800px; margin: 0 auto; }
+        pre { background: rgba(0, 0, 0, 0.3); padding: 10px; border-radius: 5px; border: 1px solid rgba(255, 255, 255, 0.1); color: #f1f5f9; }
+    </style>
+</head>
+<body>
+    <div id="cursor-glow"></div>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="dashboard.html">← Back to Dashboard</a>
+            <button class="btn btn-outline-light ms-3 btn-sm" id="viewArchitectureBtn" data-bs-toggle="modal" data-bs-target="#architectureModal">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-diagram-3 me-1" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M6 3.5A1.5 1.5 0 0 1 7.5 2h1A1.5 1.5 0 0 1 10 3.5v1A1.5 1.5 0 0 1 8.5 6v1H14a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0v-1A.5.5 0 0 1 2 7h5.5V6A1.5 1.5 0 0 1 6 4.5v-1zM8.5 5a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1zM0 11.5A1.5 1.5 0 0 1 1.5 10h2A1.5 1.5 0 0 1 5 11.5v1A1.5 1.5 0 0 1 3.5 14h-2A1.5 1.5 0 0 1 0 12.5v-1zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h2a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-2zm4.5.5A1.5 1.5 0 0 1 7.5 10h1a1.5 1.5 0 0 1 1.5 1.5v1A1.5 1.5 0 0 1 8.5 14h-1A1.5 1.5 0 0 1 6 12.5v-1zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1zm4.5.5a1.5 1.5 0 0 1 1.5-1.5h2a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5h-2a1.5 1.5 0 0 1-1.5-1.5v-1zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h2a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-2z"/>
+                </svg>
+                View Architecture
+            </button>
+            <button class="btn btn-outline-info ms-2 btn-sm" id="viewErBtn" data-bs-toggle="offcanvas" data-bs-target="#erOffcanvas">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-database me-1" viewBox="0 0 16 16">
+                  <path d="M4.318 1.258C5.29 1.055 6.388 1 7.5 1s2.21.055 3.182.258C11.83 1.496 12.8 1.93 13.5 2.5v1.272c-.7.57-1.67 1.004-2.818 1.242-1.01.21-2.14.306-3.182.306-1.042 0-2.17-.096-3.182-.306-1.148-.238-2.118-.672-2.818-1.242V2.5c.7-.57 1.67-1.004 2.818-1.242Z"/>
+                  <path d="M14 4.5v1.272c-.7.57-1.67 1.004-2.818 1.242C10.14 7.224 9.042 7.32 8 7.32s-2.14-.096-3.182-.306C3.67 6.776 2.7 6.342 2 5.772V4.5c.7.57 1.67 1.004 2.818 1.242 1.01.21 2.14.306 3.182.306 1.042 0 2.17-.096 3.182-.306C12.33 5.504 13.3 5.07 14 4.5Z"/>
+                  <path d="M14 6.5v1.272c-.7.57-1.67 1.004-2.818 1.242C10.14 9.224 9.042 9.32 8 9.32s-2.14-.096-3.182-.306C3.67 8.776 2.7 8.342 2 7.772V6.5c.7.57 1.67 1.004 2.818 1.242 1.01.21 2.14.306 3.182.306 1.042 0 2.17-.096 3.182-.306C12.33 7.504 13.3 7.07 14 6.5Z"/>
+                  <path d="M14 8.5v1.272c-.7.57-1.67 1.004-2.818 1.242C10.14 11.224 9.042 11.32 8 11.32s-2.14-.096-3.182-.306C3.67 10.776 2.7 10.342 2 9.772V8.5c.7.57 1.67 1.004 2.818 1.242 1.01.21 2.14.306 3.182.306 1.042 0 2.17-.096 3.182-.306C12.33 9.504 13.3 9.07 14 8.5Z"/>
+                  <path d="M14 10.5v1.272c-.7.57-1.67 1.004-2.818 1.242-1.01.21-2.14.306-3.182.306-1.042 0-2.17-.096-3.182-.306-1.148-.238-2.118-.672-2.818-1.242V10.5c.7.57 1.67 1.004 2.818 1.242 1.01.21 2.14.306 3.182.306 1.042 0 2.17-.096 3.182-.306C12.33 11.504 13.3 11.07 14 10.5Z"/>
+                </svg>
+                View ER Diagram
+            </button>
+            <span class="text-light ms-auto" id="repoIdDisplay"></span>
+        </div>
+    </nav>
+
+    <!-- Architecture Modal -->
+    <div class="modal fade" id="architectureModal" tabindex="-1" aria-labelledby="architectureModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+            <div class="modal-content glass-panel text-light">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="architectureModalLabel">Repository Architecture</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="treeLoading" class="text-center py-4">
+                        <div class="spinner-border text-info" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2 text-muted">Analyzing repository structure...</p>
+                    </div>
+                    <div id="treeContainer" class="tree-container" style="display: none;">
+                        <!-- Tree will be injected here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ER Diagram Offcanvas -->
+    <div class="offcanvas offcanvas-end glass-panel text-light" tabindex="-1" id="erOffcanvas" aria-labelledby="erOffcanvasLabel" style="width: 600px; border-left: 1px solid rgba(255,255,255,0.1);">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="erOffcanvasLabel">Database ER Diagram</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div id="erLoading" class="text-center py-4">
+                <div class="spinner-border text-info" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2 text-muted">AI is analyzing database schemas... this might take 10-20 seconds.</p>
+            </div>
+            <div id="erContainer" style="display: none; height: 100%; overflow: auto;">
+                <!-- Mermaid will be injected here -->
+                <div class="mermaid" id="mermaidDiagram"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="chat-container" id="chatContainer">
+        <div class="message-box message-bot glass-panel">
+            <strong class="text-info">CodeMind</strong>
+            <p class="mb-0 mt-2">Hello! Ask me anything about this repository's codebase.</p>
+        </div>
+    </div>
+
+    <div class="input-area">
+        <div class="container input-wrapper">
+            <form id="chatForm" class="d-flex gap-2">
+                <input type="text" id="questionInput" class="form-control" placeholder="E.g. Where is routing handled?" required autocomplete="off">
+                <button type="submit" id="sendBtn" class="btn btn-primary px-4">Send</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>
+        const API_URL = (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" || window.location.protocol === "file:" || window.location.hostname === "") ? "http://127.0.0.1:8000" : "/api";
+        const token = localStorage.getItem("token");
+        if (!token) window.location.href = "login.html";
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const repoId = urlParams.get('repo_id');
+        if (!repoId) window.location.href = "dashboard.html";
+        
+        document.getElementById("repoIdDisplay").textContent = `Chatting with Repo #${repoId}`;
+
+        const chatContainer = document.getElementById("chatContainer");
+        const chatForm = document.getElementById("chatForm");
+        const questionInput = document.getElementById("questionInput");
+        const sendBtn = document.getElementById("sendBtn");
+
+        function addMessage(sender, text, sources = null) {
+            const div = document.createElement("div");
+            div.className = `message-box ${sender === 'user' ? 'message-user glass-panel' : 'message-bot glass-panel'}`;
+            
+            let content = `<strong>${sender === 'user' ? '<span class="text-primary">You</span>' : '<span class="text-info">CodeMind</span>'}</strong>`;
+            
+            // Format text using marked.js if available, otherwise fallback
+            let formattedText = text;
+            if (typeof marked !== 'undefined') {
+                formattedText = marked.parse(text);
+            } else {
+                formattedText = text.replace(/</g, "&lt;").replace(/>/g, "&gt;")
+                                        .replace(/\n/g, "<br>")
+                                        .replace(/```([\s\S]*?)```/g, "<pre><code>$1</code></pre>")
+                                        .replace(/`([^`]+)`/g, "<code>$1</code>");
+            }
+            
+            content += `<div class="mt-2 text-light">${formattedText}</div>`;
+            
+            if (sources && sources.length > 0) {
+                content += `<hr class="border-light"><div class="mt-2"><strong class="d-block mb-2 small text-muted">Sources:</strong>`;
+                sources.forEach(src => {
+                    let srcText = src.file || src;
+                    if (src.lines) srcText += `:${src.lines}`;
+                    if (src.name) srcText += ` (${src.name})`;
+                    
+                    if (src.code_text) {
+                        content += `
+                        <details class="source-accordion">
+                            <summary>${srcText}</summary>
+                            <pre><code class="language-javascript">${src.code_text.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</code></pre>
+                        </details>`;
+                    } else {
+                        content += `<span class="source-file">${srcText}</span>`;
+                    }
+                });
+                content += `</div>`;
+            }
+            
+            div.innerHTML = content;
+            chatContainer.appendChild(div);
+            
+            // Apply syntax highlighting to any code blocks within this new message
+            if (typeof hljs !== 'undefined') {
+                div.querySelectorAll('pre code').forEach((block) => {
+                    hljs.highlightElement(block);
+                });
+            }
+            
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        chatForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const question = questionInput.value.trim();
+            if (!question) return;
+
+            addMessage("user", question);
+            questionInput.value = "";
+            questionInput.disabled = true;
+            sendBtn.disabled = true;
+            
+            const loadingId = "loading-" + Date.now();
+            const loadingDiv = document.createElement("div");
+            loadingDiv.id = loadingId;
+            loadingDiv.className = "message-box message-bot glass-panel text-muted";
+            loadingDiv.innerHTML = `<div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+            chatContainer.appendChild(loadingDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            try {
+                const response = await fetch(`${API_URL}/ask`, {
+                    method: "POST",
+                    headers: { 
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ repo_id: repoId, question: question })
+                });
+                
+                document.getElementById(loadingId).remove();
+                
+                if (response.status === 401) {
+                    localStorage.removeItem("token");
+                    window.location.href = "login.html";
+                    return;
+                }
+                
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.detail || "Error asking question");
+                
+                addMessage("bot", data.answer, data.sources);
+            } catch (err) {
+                if (document.getElementById(loadingId)) document.getElementById(loadingId).remove();
+                addMessage("bot", `<span class="text-danger">Error: ${err.message}</span>`);
+            } finally {
+                questionInput.disabled = false;
+                sendBtn.disabled = false;
+                questionInput.focus();
+            }
+        });
+
+        // Architecture Flow Logic
+        const architectureModal = document.getElementById('architectureModal');
+        const treeLoading = document.getElementById('treeLoading');
+        const treeContainer = document.getElementById('treeContainer');
+        let treeLoaded = false;
+
+        architectureModal.addEventListener('show.bs.modal', async () => {
+            if (treeLoaded) return;
+            
+            treeLoading.style.display = 'block';
+            treeContainer.style.display = 'none';
+            
+            try {
+                const response = await fetch(`${API_URL}/repos/${repoId}/tree`, {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                if (response.status === 401) {
+                    window.location.href = "login.html";
+                    return;
+                }
+                const data = await response.json();
+                
+                if (response.ok) {
+                    const treeHtml = buildTreeHtml(data.tree, true);
+                    treeContainer.innerHTML = `<ul class="tree-list root">${treeHtml}</ul>`;
+                    setupTreeInteractions();
+                    treeLoaded = true;
+                } else {
+                    treeContainer.innerHTML = `<div class="alert alert-danger">Failed to load tree: ${data.detail}</div>`;
+                }
+            } catch (err) {
+                treeContainer.innerHTML = `<div class="alert alert-danger">Error: ${err.message}</div>`;
+            } finally {
+                treeLoading.style.display = 'none';
+                treeContainer.style.display = 'block';
+            }
+        });
+
+        function buildTreeHtml(nodes, isRoot = false) {
+            let html = '';
+            for (const node of nodes) {
+                if (node.type === 'folder') {
+                    html += `
+                        <li class="tree-item tree-folder">
+                            <div class="tree-content">
+                                <span class="tree-toggle">▼</span>
+                                <span class="tree-icon">📁</span>
+                                <span>${node.name}</span>
+                            </div>
+                            <ul class="tree-list">
+                                ${buildTreeHtml(node.children)}
+                            </ul>
+                        </li>`;
+                } else {
+                    let icon = '📄';
+                    if (node.name.endsWith('.js') || node.name.endsWith('.ts')) icon = '📜';
+                    else if (node.name.endsWith('.html')) icon = '🌐';
+                    else if (node.name.endsWith('.css')) icon = '🎨';
+                    else if (node.name.endsWith('.py')) icon = '🐍';
+                    else if (node.name.endsWith('.md')) icon = '📝';
+                    else if (node.name.endsWith('.json')) icon = '🔧';
+                    else if (node.name.endsWith('.php')) icon = '🐘';
+                    
+                    html += `
+                        <li class="tree-item tree-file">
+                            <div class="tree-content">
+                                <span class="tree-toggle"></span>
+                                <span class="tree-icon">${icon}</span>
+                                <span>${node.name}</span>
+                            </div>
+                        </li>`;
+                }
+            }
+            return html;
+        }
+
+        function setupTreeInteractions() {
+            const folders = document.querySelectorAll('.tree-folder > .tree-content');
+            folders.forEach(folder => {
+                folder.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    folder.parentElement.classList.toggle('collapsed');
+                });
+            });
+        }
+        
+        // ER Diagram Logic
+        const erOffcanvas = document.getElementById('erOffcanvas');
+        const erLoading = document.getElementById('erLoading');
+        const erContainer = document.getElementById('erContainer');
+        const mermaidDiagram = document.getElementById('mermaidDiagram');
+        let erLoaded = false;
+
+        erOffcanvas.addEventListener('show.bs.offcanvas', async () => {
+            if (erLoaded) return;
+            
+            erLoading.style.display = 'block';
+            erContainer.style.display = 'none';
+            
+            try {
+                const response = await fetch(`${API_URL}/repos/${repoId}/er-diagram`, {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                if (response.status === 401) {
+                    window.location.href = "login.html";
+                    return;
+                }
+                const data = await response.json();
+                
+                if (response.ok) {
+                    erContainer.innerHTML = '';
+                    const newDiv = document.createElement('div');
+                    newDiv.className = 'mermaid';
+                    newDiv.textContent = data.mermaid;
+                    erContainer.appendChild(newDiv);
+                    erContainer.style.display = 'block';
+                    // Initialize mermaid for the new element
+                    mermaid.init(undefined, newDiv);
+                    erLoaded = true;
+                } else {
+                    erContainer.innerHTML = `<div class="alert alert-danger">Failed to load ER Diagram: ${data.detail}</div>`;
+                    erContainer.style.display = 'block';
+                }
+            } catch (err) {
+                erContainer.innerHTML = `<div class="alert alert-danger">Error: ${err.message}</div>`;
+                erContainer.style.display = 'block';
+            } finally {
+                erLoading.style.display = 'none';
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+        // Initialize Mermaid with larger font size and dark theme
+        if (typeof mermaid !== 'undefined') {
+            mermaid.initialize({ 
+                startOnLoad: false, 
+                theme: 'dark',
+                themeVariables: {
+                    fontSize: '18px',
+                    fontFamily: 'Inter, sans-serif'
+                },
+                er: {
+                    fontSize: 18
+                }
+            });
+        }
+    </script>
+    <style>
+        /* Ensure the ER diagram is scrollable and readable */
+        #erContainer {
+            overflow: auto;
+        }
+        .mermaid svg {
+            min-width: 800px !important; /* Prevents infinite shrinking */
+            height: auto !important;
+            font-size: 18px !important;
+        }
+    </style>
+</body>
+</html>

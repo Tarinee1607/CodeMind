@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeMind - AI Codebase Assistant</title>
+    <!-- We'll redirect the user immediately based on auth status -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const token = localStorage.getItem("codemind_token");
+            if (token) {
+                // If logged in, go to dashboard
+                window.location.href = "dashboard.html";
+            } else {
+                // If not logged in, go to login
+                window.location.href = "login.html";
+            }
+        });
+    </script>
+</head>
+<body>
+    <p>Loading CodeMind...</p>
+</body>
+</html>

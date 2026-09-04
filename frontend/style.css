@@ -1,0 +1,290 @@
+body {
+    background: linear-gradient(135deg, #09090b 0%, #171720 50%, #201b2a 100%);
+    color: #f8fafc;
+    min-height: 100vh;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    margin: 0;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Background Animated Gradient Mesh effect */
+body::before {
+    content: "";
+    position: fixed;
+    top: -50%; left: -50%; width: 200%; height: 200%;
+    background: radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(56, 189, 248, 0.05) 0%, transparent 40%);
+    z-index: -1;
+    animation: rotate 60s linear infinite;
+}
+
+@keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Glassmorphism Panel */
+.glass-panel {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+    border-radius: 16px;
+    padding: 2rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.glass-panel:hover {
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Cursor Glow Effect */
+#cursor-glow {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    mix-blend-mode: screen;
+    z-index: 9999;
+    transition: transform 0.1s ease-out;
+}
+
+/* Common Text Adjustments */
+h1, h2, h3, h4, h5, h6 {
+    color: #f1f5f9;
+    letter-spacing: -0.02em;
+}
+
+.text-muted {
+    color: #94a3b8 !important;
+}
+
+.form-control, .form-control:focus {
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: rgba(139, 92, 246, 0.5);
+    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+}
+
+.form-control::placeholder {
+    color: #64748b;
+}
+
+.btn-primary {
+    background-color: #6366f1;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+    background-color: #4f46e5;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.card {
+    background: transparent;
+    border: none;
+}
+
+.list-group-item {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #e2e8f0;
+    transition: background-color 0.2s ease;
+}
+
+.list-group-item:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Typing indicator */
+.typing-indicator {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.typing-dot {
+    width: 6px;
+    height: 6px;
+    background-color: #94a3b8;
+    border-radius: 50%;
+    animation: typing 1.4s infinite ease-in-out both;
+}
+.typing-dot:nth-child(1) { animation-delay: -0.32s; }
+.typing-dot:nth-child(2) { animation-delay: -0.16s; }
+@keyframes typing {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1); }
+}
+
+/* Accordion Sources */
+details.source-accordion {
+    background: rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    overflow: hidden;
+}
+details.source-accordion summary {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-family: monospace;
+    font-size: 0.85em;
+    color: #e2e8f0;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,0.05);
+}
+details.source-accordion summary::-webkit-details-marker {
+    display: none;
+}
+details.source-accordion summary::before {
+    content: "▶";
+    font-size: 0.8em;
+    margin-right: 8px;
+    transition: transform 0.2s;
+}
+details.source-accordion[open] summary::before {
+    transform: rotate(90deg);
+}
+details.source-accordion pre {
+    margin: 0;
+    border: none;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    border-radius: 0;
+    font-size: 0.85em;
+}
+
+/* Architecture Tree Modal */
+.modal-content.glass-panel {
+    background: rgba(20, 20, 25, 0.7);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-close-white {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* Tree View Styles */
+.tree-container {
+    font-family: 'Inter', monospace;
+    font-size: 0.9em;
+    color: #e2e8f0;
+}
+
+.tree-list {
+    list-style-type: none;
+    padding-left: 20px;
+    margin: 0;
+}
+
+.tree-list.root {
+    padding-left: 0;
+}
+
+.tree-item {
+    margin: 4px 0;
+    position: relative;
+}
+
+.tree-item::before {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: -12px;
+    width: 10px;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.tree-item::after {
+    content: '';
+    position: absolute;
+    top: -4px;
+    bottom: 0;
+    left: -12px;
+    width: 1px;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.tree-item:last-child::after {
+    height: 16px;
+    bottom: auto;
+}
+
+.tree-list.root > .tree-item::before,
+.tree-list.root > .tree-item::after {
+    display: none;
+}
+
+.tree-content {
+    display: flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background 0.2s;
+    cursor: pointer;
+}
+
+.tree-content:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.tree-icon {
+    margin-right: 8px;
+    font-size: 1.1em;
+}
+
+.tree-folder > .tree-content {
+    font-weight: 600;
+    color: #38bdf8;
+}
+
+.tree-file > .tree-content {
+    color: #cbd5e1;
+}
+
+.tree-toggle {
+    margin-right: 4px;
+    font-size: 0.8em;
+    transition: transform 0.2s;
+    display: inline-block;
+    width: 12px;
+    text-align: center;
+}
+
+.tree-folder.collapsed > .tree-content .tree-toggle {
+    transform: rotate(-90deg);
+}
+
+.tree-folder.collapsed > .tree-list {
+    display: none;
+}
